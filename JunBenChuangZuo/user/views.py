@@ -1,7 +1,7 @@
 ﻿#coding=utf-8
 
 from . import user
-from flask import render_template
+from flask import render_template,redirect,url_for,flash
 from .forms import LoginForm, RegisterForm
 from models import User,db
 
@@ -16,11 +16,13 @@ def login():
         password = form.password.data
         user = User.query.filter_by(email=email).first()
         if user == None:
-            return render_template('user/error.html', email=email)
+            flash('The user does not exist!')
+            return redirect(url_for('.login'))
         elif user.password != password:
-            return render_template('user/error.html', email=email)
+            flash('The password is not correct!')
+            return redirect(url_for('.login'))
         else:
-            return render_template('user/success.html',email=email)
+            return redirect(url_for('main.home'))
     return render_template('user/login.html',form=form)
 
 @user.route('/register',methods=['GET','POST'])
@@ -36,5 +38,5 @@ def register():
         user = User(email,username,password)
         db.session.add(user)
         db.session.commit()
-        return render_template('user/success.html', email=email)
+        return redirect(url_for('.login'))
     return render_template('user/register.html',form=form)

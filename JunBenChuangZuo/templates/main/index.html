@@ -15,6 +15,11 @@
     </style>
 {% endblock head %}
 
+{% block userLoginRegister%}
+<span class="m-r-sm text-muted welcome-message"><a href="/user">登录</a></span>
+<span class="m-r-sm text-muted welcome-message"><a href="/user/register" >注册</a></span>
+{% endblock userLoginRegister%}
+
 
 {% block maintitle %}
     {{ super() }}
