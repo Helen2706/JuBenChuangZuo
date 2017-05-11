@@ -16,8 +16,13 @@
 {% endblock head %}
 
 {% block userLoginRegister%}
+{% if username%}
+<span class="m-r-sm text-muted welcome-message"><a href="/user">{{username}}</a></span>
+<span class="m-r-sm text-muted welcome-message"></span>
+{% else %}
 <span class="m-r-sm text-muted welcome-message"><a href="/user">登录</a></span>
 <span class="m-r-sm text-muted welcome-message"><a href="/user/register" >注册</a></span>
+{% endif %}
 {% endblock userLoginRegister%}
 
 

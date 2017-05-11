@@ -2,7 +2,7 @@
 #coding:utf8
 
 from . import main
-from flask import render_template, request
+from flask import render_template, request,session
 from models import GraphUtils, ProjectUtils
 
 graphUtils = GraphUtils()
@@ -28,4 +28,4 @@ def home():
         all_projects = projectUtils.getAllProjects()
         print(all_projects)
         # 渲染模板 交给index主页面-首页
-        return render_template('main/index.html', navId = "main", all_projects=all_projects)
+        return render_template('main/index.html', navId = "main", all_projects=all_projects,username = session.get('username'))

@@ -1,7 +1,7 @@
 ﻿#coding=utf-8
 
 from . import user
-from flask import render_template,redirect,url_for,flash
+from flask import render_template,redirect,url_for,flash,session
 from .forms import LoginForm, RegisterForm
 from models import User,db
 
@@ -22,6 +22,8 @@ def login():
             flash('The password is not correct!')
             return redirect(url_for('.login'))
         else:
+            session['username'] = user.username
+
             return redirect(url_for('main.home'))
     return render_template('user/login.html',form=form)
 
