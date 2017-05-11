@@ -6,12 +6,7 @@ from flask import jsonify
 # 导入py2neo包里的graph（图数据库）
 from py2neo import Graph, Node, Relationship
 import sys
-from flask_sqlalchemy import SQLAlchemy
-from flask_bootstrap import Bootstrap
-
-
-db = SQLAlchemy()
-bootstrap = Bootstrap()
+from config import db
 
 
 

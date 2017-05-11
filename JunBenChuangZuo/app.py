@@ -2,19 +2,12 @@
 #coding:utf8
 
 from flask import Flask, redirect, url_for
-from analysis.analyse import AnalyseUtils
-from flask_bootstrap import Bootstrap
-from models import db
+from config import create_app
 
-# 连接到neo4j相应数据库
-app = Flask(__name__)
-bootstrap = Bootstrap(app)
-db.init_app(app)
-
+app = create_app()
 app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:1234@localhost:3306/database'
 app.config['SECRET_KEY'] = '\xca\x0c\x86\x04\x98@\x02b\x1b7\x8c\x88]\x1b\xd7"+\xe6px@\xc3#\\'
-
-
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS '] = False
 
 from main import main as main_blueprint     # 蓝本类，调用实例对象，将网址分模块处理
 app.register_blueprint(blueprint=main_blueprint, url_prefix='/')
