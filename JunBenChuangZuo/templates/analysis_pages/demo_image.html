@@ -1,0 +1,28 @@
+{% extends "main.html" %}
+
+
+{% block head %}
+    {{ super() }}
+    <title>头像图</title>
+    <link href="/static/css/style.css" rel="stylesheet" />
+    <link href="/static/css/d3.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        var projectId = '{{ projectId }}';
+    </script>
+    <script src="/static/lib/jquery-1.11.2.min.js"></script>
+    <script id="depot_js" src="/static/lib/d3.v3.min.js"></script>
+    <script id="showMode_js" src="/static/js/img_network.js"></script>
+{% endblock head %}
+
+{#jinja作为Python的 模板语言，定义了模板样式，可以直接继承引用，不需要重复定义#}
+{% block titletext %}
+    人物网络图(image_network)
+{% endblock titletext %}
+
+{% block content %}
+    <div id="imgnetwork_content" class="">
+    </div>
+{% endblock content %}
+
+
