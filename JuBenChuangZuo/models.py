@@ -6,6 +6,9 @@ from flask import jsonify
 # 导入py2neo包里的graph（图数据库）
 from py2neo import Graph, Node, Relationship
 import sys
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 # 获取系统默认的编码方式，防止中文编译不过，print打印乱码
@@ -21,6 +24,14 @@ except Exception:
 
 hideKeys = {'id', 'label', 'index', 'x', 'y', 'px', 'py', 'temp_index', 'source', 'target', 'left', 'right', 'hash', 'fixed'}
 
+
+# 用户登录注册类
+class User(db.Model):
+    __tablename__ = 'user'
+    id = db.Column(db.Integer,primary_key=True)
+    email = db.Column(db.String(128),unique=True,index=True)
+    username = db.Column(db.String(128))
+    password = db.Column(db.String(128))
 
 # 节点操作
 class NodeUtils:
