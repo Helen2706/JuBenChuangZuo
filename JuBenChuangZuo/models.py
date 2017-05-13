@@ -32,6 +32,10 @@ class User(db.Model):
     email = db.Column(db.String(128),unique=True,index=True)
     username = db.Column(db.String(128))
     password = db.Column(db.String(128))
+    def __init__(self,email,username,password):
+        self.email = email
+        self.username = username
+        self.password = password
 
 # 节点操作
 class NodeUtils:

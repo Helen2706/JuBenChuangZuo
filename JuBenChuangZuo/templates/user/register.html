@@ -1,9 +1,9 @@
 {% extends "user/base.html" %}
 
-{% block formtitle %}登录{% endblock formtitle %}
+{% block formtitle %}注册{% endblock formtitle %}
 
 {% block page_content %}
-<form role="form" method="post">
+<form role="form"  method="post">
     {{form.hidden_tag()}}
     <div class="form-group">
         {{form.email.label}}<br>
@@ -12,6 +12,15 @@
         <div style='color:red;'>{{error}}</div>
         {% endfor %}
     </div>
+
+    <div class="form-group">
+        {{form.username.label}}<br>
+        {{form.username(class="form-control")}}
+        {% for error in form.errors.username %}
+        <div style='color:red;'>{{error}}</div>
+        {% endfor %}
+    </div>
+
     <div class="form-group">
         {{form.password.label}}<br>
         {{form.password(class="form-control")}}
@@ -19,9 +28,12 @@
         <span style='color:red;'>{{error}}</span>
         {% endfor %}
     </div>
+
     <div class="form-group">
-        {{form.remember_me()}}&nbsp&nbsp{{form.remember_me.label}}
+        {{form.password2.label}}<br>
+        {{form.password2(class="form-control")}}
     </div>
+
     <div class="form-group">
         <div class="container" style="margin:0 padding:0 auto;">
             <div class="row">
@@ -29,13 +41,14 @@
                     {{form.submit(class="btn btn-primary btn-info btn-block")}}
                 </div>
                 <div class="col-sm-1"></div>
-                <div class="col-sm-1"><a href="{{url_for('user.register')}}" class="btn btn-primary btn-info">立即注册</a>
+                <div class="col-sm-1"><a href="{{url_for('user.login')}}" class="btn btn-primary btn-info">直接登录</a>
                 </div>
                 <div class="col-sm-1"></div>
             </div>
         </div>
     </div>
 </form>
+{{email}}
 {% endblock page_content %}
 
 
