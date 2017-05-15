@@ -19,7 +19,7 @@ def login():
             return redirect(url_for('main.home'))
     return render_template('user/login.html',form=form)
 
-@user.route('register',methods=['POST','GET'])
+@user.route('/register',methods=['POST','GET'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
