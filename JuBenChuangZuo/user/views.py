@@ -12,7 +12,7 @@ def login():
         if user is None:
             flash('用户不存在！')
             return redirect(url_for('.login'))
-        elif user.password!=form.password.data:
+        elif not user.verify_password(form.password.data):
             flash('用户名或密码错误！')
             return redirect(url_for('.login'))
         else:

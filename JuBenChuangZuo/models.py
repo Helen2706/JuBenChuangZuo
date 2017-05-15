@@ -3,10 +3,12 @@
 # 可能用到的函数库，数据库相关操作
 
 from flask import jsonify
+from flask_login import UserMixin
 # 导入py2neo包里的graph（图数据库）
 from py2neo import Graph, Node, Relationship
 import sys
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash,check_password_hash
 
 db = SQLAlchemy()
 
@@ -26,16 +28,33 @@ hideKeys = {'id', 'label', 'index', 'x', 'y', 'px', 'py', 'temp_index', 'source'
 
 
 # 用户登录注册类
-class User(db.Model):
+class User(UserMixin,db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer,primary_key=True)
     email = db.Column(db.String(128),unique=True,index=True)
     username = db.Column(db.String(128))
-    password = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128))
+
     def __init__(self,email,username,password):
         self.email = email
         self.username = username
-        self.password = password
+        self.password_hash = generate_password_hash(password)
+
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    def verify_password(self,password):
+        return check_password_hash(self.password_hash,password)
+
+    @password.setter
+    def password(self,password):
+        self.password_hash = generate_password_hash(password)
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
 
 # 节点操作
 class NodeUtils:
