@@ -4,7 +4,7 @@ from . import user
 from forms import LoginForm,RegisterForm
 from models import User,db
 
-@user.route('/login', methods=['POST','GET'])
+@user.route('/', methods=['POST','GET'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -19,7 +19,7 @@ def login():
             return redirect(url_for('main.home'))
     return render_template('user/login.html',form=form)
 
-@user.route('/register',methods=['POST','GET'])
+@user.route('register',methods=['POST','GET'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
