@@ -9,9 +9,10 @@ from py2neo import Graph, Node, Relationship
 import sys
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
+from flask_mail import Mail
 
 db = SQLAlchemy()
-
+mail = Mail()
 
 # 获取系统默认的编码方式，防止中文编译不过，print打印乱码
 type = sys.getfilesystemencoding()

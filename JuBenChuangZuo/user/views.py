@@ -3,6 +3,7 @@ from flask import flash,redirect,url_for,render_template
 from . import user
 from forms import LoginForm,RegisterForm
 from models import User,db
+from email import send_email
 
 @user.route('/', methods=['POST','GET'])
 def login():
@@ -29,6 +30,7 @@ def register():
         user = User(email, username, password)
         db.session.add(user)
         db.session.commit()
+        send_email(user.email,'确认账户','user/email/email_body',user=user)
         return redirect(url_for('user.login'))
     return render_template('user/register.html',form=form)
 
