@@ -7,7 +7,7 @@ from email import send_email
 from flask_login import login_user, logout_user, login_required, \
     current_user
 
-@user.route('/', methods=['POST','GET'])
+@user.route('/login', methods=['POST','GET'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -35,15 +35,14 @@ def register():
         db.session.commit()
         token = user.generate_confirmation_token()
         send_email(user.email,'确认账户','user/email/email_body',user=user,token=token)
-        flash('已发送确认邮件到您的邮箱')
-        return redirect(url_for('user.login'))
+        flash('已发送确认邮件到您的邮箱，请您先登录再进行确认')
+        return render_template("user/emailInfo.html")
     return render_template('user/register.html',form=form)
 
 # 用户收到确认邮件后，点击链接的处理函数
 @user.route('/confirm/<token>')
 @login_required
 def confirm(token):
-    print current_user.username
     if current_user.confirmed:
         flash('您已认证，无需再次认证')
         return render_template('user/confirmInfo.html')
@@ -74,12 +73,12 @@ def unconfirmed():
     return render_template('user/unconfirmed.html')
 
 # 当用户需要重新发送确认邮件时执行
-@user.route('confirm')
+@user.route('/confirm')
 @login_required
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, '确认账户', 'user/email/email_body', user=user, token=token)
-    return redirect("http://www.2345.com/mail.htm")
+    return render_template("user/emailInfo.html")
 
 
 
