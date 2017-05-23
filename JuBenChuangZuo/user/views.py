@@ -35,6 +35,7 @@ def register():
         db.session.commit()
         token = user.generate_confirmation_token()
         send_email(user.email,'确认账户','user/email/email_body',user=user,token=token)
+        flash('已发送确认邮件到您的邮箱')
         return redirect(url_for('user.login'))
     return render_template('user/register.html',form=form)
 
@@ -53,5 +54,34 @@ def confirm(token):
         flash('认证信息无效')
         return render_template('user/confirmInfo.html')
     return render_template('user/confirmInfo.html')
+
+# 定义全局的请求钩子，当用户登录但未确认账户时，并且访问的是user蓝本之外的路由时，拦截请求
+@user.before_app_request
+def before_request():
+    if current_user.is_authenticated \
+        and not current_user.confirmed \
+        and request.endpoint[:5] != 'user.' \
+        and request.endpoint != 'static':
+        return redirect(url_for('user.unconfirmed'))
+
+# 当请求钩子拦截到请求时，跳转到这个页面
+@user.route('/unconfirmed')
+def unconfirmed():
+    if current_user.is_anonymous:
+        return redirect(url_for('user.login'))
+    if current_user.confirmed:
+        return redirect(url_for('main.home'))
+    return render_template('user/unconfirmed.html')
+
+# 当用户需要重新发送确认邮件时执行
+@user.route('confirm')
+@login_required
+def resend_confirmation():
+    token = current_user.generate_confirmation_token()
+    send_email(current_user.email, '确认账户', 'user/email/email_body', user=user, token=token)
+    return redirect("http://www.2345.com/mail.htm")
+
+
+
 
 

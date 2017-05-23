@@ -1,0 +1,9 @@
+{% extends "user/base.html" %}
+
+{% block head%}
+{{super()}}
+<meta http-equiv="refresh" content="3;url={{url_for('main.home')}}">
+{% endblock head %}
+{% block page_content %}
+3s后将跳转到主页面...
+{% endblock page_content %}

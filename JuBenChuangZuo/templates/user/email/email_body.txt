@@ -1,0 +1,5 @@
+亲爱的，{{user.username}}
+您的账号已成功注册，请点击下面的链接确认您的账号:
+{{url_for('user.confirm',token=token,_external=True)}}
+
+感谢您的确认
