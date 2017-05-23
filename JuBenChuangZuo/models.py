@@ -2,7 +2,7 @@
 #coding:utf8
 # 可能用到的函数库，数据库相关操作
 
-from flask import jsonify
+from flask import jsonify,current_app
 from flask_login import UserMixin
 # 导入py2neo包里的graph（图数据库）
 from py2neo import Graph, Node, Relationship
@@ -10,9 +10,22 @@ import sys
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_mail import Mail
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 mail = Mail()
+login_manager = LoginManager()
+
+#设置LoginManager的保护级别和登录视图
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'user.login'
+
+#加载用户回调函数
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 # 获取系统默认的编码方式，防止中文编译不过，print打印乱码
 type = sys.getfilesystemencoding()
@@ -25,8 +38,6 @@ except Exception:
     print ("你可能还没启动Neo4j数据库，或者数据库的用户名密码不正确").decode('UTF-8').encode(type)
     exit()
 
-hideKeys = {'id', 'label', 'index', 'x', 'y', 'px', 'py', 'temp_index', 'source', 'target', 'left', 'right', 'hash', 'fixed'}
-
 
 # 用户登录注册类
 class User(UserMixin,db.Model):
@@ -35,6 +46,7 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(128),unique=True,index=True)
     username = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
+    confirmed = db.Column(db.Boolean)
 
     def __init__(self,email,username,password):
         self.email = email
@@ -55,6 +67,23 @@ class User(UserMixin,db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+    def generate_confirmation_token(self,expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'],expiration)
+        return s.dumps({'confirm':self.id})
+
+    def confirm(self,token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('confirm') != self.id:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        db.session.commit()
+        return True
 
 
 # 节点操作

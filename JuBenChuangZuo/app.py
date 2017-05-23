@@ -2,7 +2,7 @@
 #coding:utf8
 
 from flask import Flask, redirect, url_for
-from models import db,mail
+from models import db,mail,login_manager
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:1234@localhost:3306/database'
@@ -21,6 +21,7 @@ app.config.update(
 )
 db.init_app(app)
 mail.init_app(app)
+login_manager.init_app(app)
 
 from main import main as main_blueprint     # 蓝本类，调用实例对象，将网址分模块处理
 app.register_blueprint(blueprint=main_blueprint, url_prefix='/')

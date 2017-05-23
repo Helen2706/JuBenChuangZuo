@@ -1,1 +1,5 @@
-您的账号已成功注册，请点击下面的链接确认您的账号
+<p>亲爱的，{{user.username}}</p>
+<p>您的账号已成功注册，请点击下面的链接确认您的账号:</p>
+<p><a href="{{url_for('user.confirm',token=token,_external=True)}}">{{url_for('user.confirm',token=token,_external=True)}}</a></p>
+
+<p>感谢您的确认</p>

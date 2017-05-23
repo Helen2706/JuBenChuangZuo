@@ -1,9 +1,11 @@
 #coding:utf8
-from flask import flash,redirect,url_for,render_template
+from flask import flash,redirect,url_for,render_template,request
 from . import user
 from forms import LoginForm,RegisterForm
 from models import User,db
 from email import send_email
+from flask_login import login_user, logout_user, login_required, \
+    current_user
 
 @user.route('/', methods=['POST','GET'])
 def login():
@@ -17,7 +19,8 @@ def login():
             flash('用户名或密码错误！')
             return redirect(url_for('.login'))
         else:
-            return redirect(url_for('main.home'))
+            login_user(user,form.remember_me.data)
+            return redirect(request.args.get('next') or url_for('main.home'))
     return render_template('user/login.html',form=form)
 
 @user.route('/register',methods=['POST','GET'])
@@ -30,7 +33,25 @@ def register():
         user = User(email, username, password)
         db.session.add(user)
         db.session.commit()
-        send_email(user.email,'确认账户','user/email/email_body',user=user)
+        token = user.generate_confirmation_token()
+        send_email(user.email,'确认账户','user/email/email_body',user=user,token=token)
         return redirect(url_for('user.login'))
     return render_template('user/register.html',form=form)
+
+# 用户收到确认邮件后，点击链接的处理函数
+@user.route('/confirm/<token>')
+@login_required
+def confirm(token):
+    print current_user.confirmed
+    if current_user.confirmed:
+        flash('您已认证，无需再次认证')
+        return render_template('user/confirmInfo.html')
+    if current_user.confirm(token):
+        flash('您的账号认证成功')
+        return render_template('user/confirmInfo.html')
+    else:
+        flash('认证信息无效')
+        return render_template('user/confirmInfo.html')
+    return render_template('user/confirmInfo.html')
+
 
