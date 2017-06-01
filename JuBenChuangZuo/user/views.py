@@ -35,7 +35,6 @@ def register():
         db.session.commit()
         token = user.generate_confirmation_token()
         send_email(user.email,'确认账户','user/email/email_body',user=user,token=token)
-        flash('已发送确认邮件到您的邮箱，请您先登录再进行确认')
         return render_template("user/emailInfo.html")
     return render_template('user/register.html',form=form)
 
