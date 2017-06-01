@@ -50,7 +50,8 @@ def confirm(token):
         return render_template('user/confirmInfo.html')
     else:
         flash('认证信息无效')
-        return render_template('user/confirmInfo.html')
+        message = "点击此处再次发送认证信息"
+        return render_template('user/confirmInfo.html',message = message)
     return render_template('user/confirmInfo.html')
 
 # 定义全局的请求钩子，当用户登录但未确认账户时，并且访问的是user蓝本之外的路由时，拦截请求
@@ -66,6 +67,7 @@ def before_request():
 @user.route('/unconfirmed')
 def unconfirmed():
     if current_user.is_anonymous:
+        flash("还未登录，请您登录")
         return redirect(url_for('user.login'))
     if current_user.confirmed:
         return redirect(url_for('main.home'))
@@ -79,6 +81,19 @@ def resend_confirmation():
     send_email(current_user.email, '确认账户', 'user/email/email_body', user=user, token=token)
     return render_template("user/emailInfo.html")
 
+# 创建新的页面用于测试某些页面需要登录才能访问
+@user.route('/test')
+@login_required
+def test_login():
+    return render_template("user/test_login.html")
+
+# 注销用户
+@user.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('您已注销登录')
+    return redirect(url_for('user.login'))
 
 
 
