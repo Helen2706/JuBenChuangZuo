@@ -20,6 +20,7 @@ login_manager = LoginManager()
 #设置LoginManager的保护级别和登录视图
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'user.login'
+login_manager.login_message = '请您先登录再访问'
 
 #加载用户回调函数
 @login_manager.user_loader

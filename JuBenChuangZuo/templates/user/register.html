@@ -1,5 +1,45 @@
 {% extends "user/base.html" %}
 
+{% block head %}
+{{super()}}
+<title>用户注册</title>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js">
+</script>
+<script>
+$(document).ready(function(){
+    d = new Date();
+    $("#validateimage").attr("src", "/static/img/code/code1.jpg?"+d.getTime());
+});
+</script>
+<script>
+     $(document).ready(function(){
+        $("#vertify_code").change(function(){
+        $.ajax({
+            type : "POST",
+            url : "{{url_for('user.validate')}}",
+            dataType : "json",
+            data : {
+            "params":$("input[name=verification_code]").val()
+            },
+            error:function(data){
+                alert("图形验证出错!");
+            },
+            success:function(data){
+                if(data=="True"){
+                    $("#validatetip").html("验证码正确");
+                    }
+                else{
+                    $("#validatetip").text("验证码错误");
+                    $("#vertify_code").val("");
+                    }
+            }
+        });
+       });
+
+    });
+</script>
+{% endblock %}
+
 {% block formtitle %}注册{% endblock formtitle %}
 
 {% block page_content %}
@@ -35,6 +75,21 @@
     </div>
 
     <div class="form-group">
+        {{ form.verification_code.label}}<br>
+         <div class="container" style="margin:0 padding:0 auto vertical-align: middle;">
+            <div class="row">
+                <div class="col-sm-2" style="margin:0 padding:0;">
+                    {{ form.verification_code(id="vertify_code",class="form-control") }}
+                </div>
+                <div class="col-sm-2">
+                    <label class="control-label"><img src="{{ url_for('static',filename='img/code/code.jpg')}}",id="validateimage"></label>
+                </div>
+            </div>
+             <p id="validatetip" class="help-block">请输入图形验证码</p>
+        </div>
+    </div>
+
+    <div class="form-group">
         <div class="container" style="margin:0 padding:0 auto;">
             <div class="row">
                 <div class="col-sm-1">
@@ -47,8 +102,59 @@
             </div>
         </div>
     </div>
+
+
 </form>
 {{email}}
 {% endblock page_content %}
+
+
+
+
+
+
+    <!--verification_code = StringField(u'验证码', validators=[Required(), Length(4, 4, message=u'填写4位验证码')])-->
+
+        <!--<div class="form-group required">-->
+            <!--{{ form.verification_code.label(class="control-label") | safe }}-->
+            <!--<label class="control-label"><img src="{{ url_for('static', filename='image/code/'+code_img) }}"></label>-->
+            <!--{{ form.verification_code(class="form-control", required=True) }}-->
+        <!--</div>-->
+
+
+
+<!--@user.route('/register', methods=['GET', 'POST'])-->
+<!--def register():-->
+    <!--form = RegisterForm()-->
+    <!--if form.validate_on_submit():-->
+        <!--username = form.username.data-->
+        <!--print username-->
+        <!--if get_user(username):-->
+            <!--print '账号已被注册'-->
+            <!--flash(u'账号已被注册')-->
+            <!--code_img, code_text = generate_verification_code()-->
+            <!--session['code_text'] = code_text-->
+            <!--return render_template('user/register.html', form=form, code_img=code_img)-->
+        <!--if 'code_text' in session and session['code_text'] != form.verification_code.data:-->
+            <!--code_img, code_text = generate_verification_code()-->
+            <!--session['code_text'] = code_text-->
+            <!--return render_template('user/register.html', form=form, code_img=code_img)-->
+        <!--email = form.email.data-->
+        <!--password = form.password.data-->
+        <!--user = User(username=username, password=password, email=email)-->
+        <!--try:-->
+            <!--db.session.add(user)-->
+            <!--db.session.commit()-->
+            <!--return redirect(url_for('.index'))-->
+        <!--except:-->
+            <!--print traceback.print_exc()-->
+            <!--db.session.rollback()-->
+            <!--flash(u'注册失败')-->
+            <!--code_img, code_text = generate_verification_code()-->
+            <!--session['code_text'] = code_text-->
+            <!--return render_template('user/register.html', form=form, code_img=code_img)-->
+    <!--code_img, code_text = generate_verification_code()-->
+    <!--session['code_text'] = code_text-->
+    <!--return render_template('user/register.html', form=form, code_img=code_img)-->
 
 
