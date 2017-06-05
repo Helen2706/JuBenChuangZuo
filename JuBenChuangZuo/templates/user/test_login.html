@@ -1,0 +1,11 @@
+{% extends "user/base.html" %}
+
+{% block head %}
+{{super()}}
+<title>登录测试</title>
+{% endblock %}
+
+{% block page_content %}
+只有登录后的用户才能看到这条信息
+<a href="{{url_for('user.logout')}}">注销用户</a>
+{% endblock page_content %}
