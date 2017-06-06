@@ -29,6 +29,7 @@ def validate():
     userInput = request.form.get('params')
     if userInput == session['code_text']:
         return jsonify("True")
+    session
     return jsonify("False")
 
 @user.route('/register',methods=['POST','GET'])

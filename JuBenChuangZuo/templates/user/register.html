@@ -5,12 +5,12 @@
 <title>用户注册</title>
 <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js">
 </script>
-<script>
-$(document).ready(function(){
-    d = new Date();
-    $("#validateimage").attr("src", "/static/img/code/code1.jpg?"+d.getTime());
-});
-</script>
+<!--<script>-->
+<!--$(document).ready(function(){-->
+    <!--d = new Date();-->
+    <!--$("#validateimage").attr("src", "/static/img/code/code1.jpg?"+d.getTime());-->
+<!--});-->
+<!--</script>-->
 <script>
      $(document).ready(function(){
         $("#vertify_code").change(function(){
@@ -35,7 +35,6 @@ $(document).ready(function(){
             }
         });
        });
-
     });
 </script>
 {% endblock %}

@@ -27,13 +27,13 @@ class RegisterForm(FlaskForm):
     # verification_code = StringField('验证码', validators=[InputRequired(), Length(4, 4, message='填写4位验证码')])
     # submit = SubmitField('注册')
 
-    def validate_email(self, field):
-        if User.query.filter_by(email=field.data).first():
-            raise ValidationError('邮箱已注册')
+    # def validate_email(self, field):
+    #     if User.query.filter_by(email=field.data).first():
+    #         raise ValidationError('邮箱已注册')
 
-    def validate_username(self, field):
-        if User.query.filter_by(username=field.data).first():
-            raise ValidationError('用户名已存在')
+    # def validate_username(self, field):
+    #     if User.query.filter_by(username=field.data).first():
+    #         raise ValidationError('用户名已存在')
 
 
 
