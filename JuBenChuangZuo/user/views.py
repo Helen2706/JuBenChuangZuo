@@ -10,20 +10,17 @@ from flask_login import login_user, logout_user, login_required, \
 
 @user.route('/', methods=['POST','GET'])
 def login():
-    form = LoginForm()
-    # if form.validate_on_submit():
-    #     user = User.query.filter_by(email=form.email.data).first()
-    #     if user is None:
-    #         flash('用户不存在！')
-    #         return redirect(url_for('.login'))
-    #     elif not user.verify_password(form.password.data):
-    #         flash('用户名或密码错误！')
-    #         return redirect(url_for('.login'))
-    #     else:
-    #         login_user(user,form.remember_me.data)
-    #         return redirect(request.args.get('next') or url_for('main.home'))
-    return render_template('user/login.html',form=form)
-
+    if request.method == "GET":
+        return render_template("user/login.html")
+    else:
+        email = request.form.get("email")
+        password = request.form.get("password")
+        user = User.query.filter_by(email=email).first()
+        if user.verify_password(password):
+            login_user(user, )
+            return redirect(request.args.get('next') or url_for('main.home'))
+        flash("用户名或密码错误！")
+        return redirect(url_for('.login'))
 @user.route('/register',methods=['POST','GET'])
 def register():
     if request.method == 'GET':
@@ -52,7 +49,7 @@ def validateusername():
         return jsonify(False)
     return jsonify(True)
 
-
+#注册时检查邮箱是否存在
 @user.route('/validate/email',methods=['POST','GET'])
 def validateemail():
     email = request.form.get('email')
@@ -60,12 +57,32 @@ def validateemail():
         return jsonify(False)
     return jsonify(True)
 
+#登录检查邮箱是否已注册
+@user.route('/loginvalidate/email',methods=['POST','GET'])
+def validateemail2():
+    email = request.form.get('email')
+    if User.query.filter_by(email=email).first():
+        return jsonify(True)
+    return jsonify(False)
+
+#检查验证码是否正确
 @user.route('/validate/confirmcode',methods=['POST','GET'])
 def validateconfirmcode():
     confirmcode = request.form.get('confirmcode')
     if confirmcode == session['code_text']:
         return jsonify(True)
     return jsonify(False)
+
+#检查用户名密码是否正确
+@user.route('/validate/password',methods=['POST','GET'])
+def validatepassword():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    user = User.query.filter_by(email=email).first()
+    if user.verify_password(password):
+        return jsonify(True)
+    return jsonify(False)
+
 
 
 @user.route('/register/protocol')
