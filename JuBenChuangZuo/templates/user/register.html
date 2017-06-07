@@ -47,13 +47,13 @@
                 <div class="form-group">
                     <label for="password"  class="col-sm-3 control-label">密码：</label>
                     <div class="col-sm-7">
-                        <input type="text" name="password" id="password" class="form-control">
+                        <input type="password" name="password" id="password" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="confirmpassword"  class="col-sm-3 control-label">确认密码：</label>
                     <div class="col-sm-7">
-                        <input type="text" name="confirmpassword" id="confirmpassword" class="form-control">
+                        <input type="password" name="confirmpassword" id="confirmpassword" class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
@@ -72,11 +72,11 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <span class="col-sm-3">
-                    </span>
-                    <span class="col-sm-4">
-                        <input type="checkbox" checked>同意<a href="{{url_for('user.register_protocol')}}" target="_blank">用户注册协议</a>
-                    </span>
+                    <div class="col-sm-3">
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="checkbox" id="agreeProtlcol"  name="agreeProtlcol" checked>同意<a href="{{url_for('user.register_protocol')}}" target="_blank">用户注册协议</a>
+                    </div>
                 </div>
                 <div class="form-group">
                     <span class="col-sm-3">
@@ -101,7 +101,7 @@
                 username:{
                     required:true,
                     minlength:3,
-                    maxlength:10,
+                    maxlength:20,
                     remote:{
                         url:"/user/validate/username",
                         type:"post",
@@ -114,17 +114,84 @@
                     }
                 },
                 email:{
-                    <!--required:true,-->
-                    <!--email:true,-->
+                    required:true,
+                    email:true,
+                    minlength:6,
+                    maxlength:20,
+                    remote:{
+                        url:"/user/validate/email",
+                        type:"post",
+                        data:{
+                            email:function(){return $("#email").val();}
+                        }
+                    }
+                },
+                password:{
+                    required:true,
+                    minlength:6,
+                    maxlength:15
+                },
+                confirmpassword:{
+                    equalTo:"#password"
+                },
+                telephone:{
+                    required:true,
+                    digits:true,
+                    rangelength:[11,11]
+                },
+                confirmcode:{
+                    required:true,
+                    rangelength:[4,4],
+                    remote:{
+                        url:"validate/confirmcode",
+                        type:"post",
+                        data:{
+                            confirmcode:function(){return $("#confirmcode").val();}
+                        }
+                    }
+                },
+                agreeProtlcol:{
+                    required:true
                 }
             },
             messages:{
                 username:{
                     required:"用户名必填",
                     minlength:"最小长度为3",
-                    maxlength:"最大长度为10",
+                    maxlength:"最大长度为20",
                     remote:"用户名已存在"
+                },
+                email:{
+                    required:"邮箱必填",
+                    minlength:"最小长度为6",
+                    maxlength:"最大长度为20",
+                    email:"邮箱格式不正确",
+                    remote:"邮箱已注册"
+                },
+                password:{
+                    required:"密码必填",
+                    minlength:"密码最小长度为6",
+                    maxlength:"密码最大长度为15"
+                },
+                confirmpassword:{
+                    equalTo:"两次密码输入不一致"
+                },
+                telephone:{
+                    required:"请填写手机号",
+                    digits:"手机号应全为数字",
+                    rangelength:"请输入11位手机号",
+                },
+                confirmcode:{
+                    required:"请填写验证码",
+                    rangelength:"请输入4位验证码",
+                    remote:"验证码不正确"
+                },
+                agreeProtlcol:{
+                    required:"请同意用户协议后再注册"
                 }
+            },
+            errorPlacement: function(error, element) {
+                error.appendTo( element.parent() );
             }
         });
     });

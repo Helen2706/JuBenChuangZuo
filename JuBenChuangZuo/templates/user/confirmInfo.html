@@ -1,0 +1,17 @@
+{% extends "user/base.html" %}
+
+{% block head%}
+{{super()}}
+<title>用户认证</title>
+{% if not message %}
+<meta http-equiv="refresh" content="3;url={{url_for('main.home')}}">
+{% endif %}
+{% endblock head %}
+{% block page_content %}
+{% if not message %}
+3s后将跳转到主页面...
+{% else %}
+    <a href="{{url_for('user.resend_confirmation')}}">{{ message }}</a>
+    ，请您尽快前往邮箱进行确认。
+{% endif %}
+{% endblock page_content %}

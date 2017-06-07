@@ -31,13 +31,42 @@ def register():
         session['code_text'] = strs
         return render_template('user/register.html')
     else:
+        email = request.form.get("email")
         username = request.form.get("username")
-        print username
-        return username
+        password = request.form.get("password")
+        telephone = request.form.get("telephone")
+        confirmcode = request.form.get("confirmcode")
+        user = User(email, username, password, telephone)
+        if(confirmcode==session['code_text']):
+            db.session.add(user)
+            db.session.commit()
+            token = user.generate_confirmation_token()
+            send_email(user.email,'确认账户','user/email/email_body',user=user,token=token)
+            login_user(user, True)
+            return render_template("user/emailInfo.html")
 
 @user.route('/validate/username',methods=['POST','GET'])
 def validateusername():
+    username = request.form.get('username')
+    if User.query.filter_by(username=username).first():
+        return jsonify(False)
+    return jsonify(True)
+
+
+@user.route('/validate/email',methods=['POST','GET'])
+def validateemail():
+    email = request.form.get('email')
+    if User.query.filter_by(email=email).first():
+        return jsonify(False)
+    return jsonify(True)
+
+@user.route('/validate/confirmcode',methods=['POST','GET'])
+def validateconfirmcode():
+    confirmcode = request.form.get('confirmcode')
+    if confirmcode == session['code_text']:
+        return jsonify(True)
     return jsonify(False)
+
 
 @user.route('/register/protocol')
 def register_protocol():

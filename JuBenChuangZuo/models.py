@@ -49,10 +49,11 @@ class User(UserMixin,db.Model):
     telephone = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean)
 
-    def __init__(self,email,username,password):
+    def __init__(self,email,username,password,telephone):
         self.email = email
         self.username = username
         self.password_hash = generate_password_hash(password)
+        self.telephone = telephone
 
 
     @property
