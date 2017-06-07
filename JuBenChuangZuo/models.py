@@ -46,6 +46,7 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(128),unique=True,index=True)
     username = db.Column(db.String(128))
     password_hash = db.Column(db.String(128))
+    telephone = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean)
 
     def __init__(self,email,username,password):

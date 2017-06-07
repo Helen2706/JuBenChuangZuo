@@ -1,42 +1,47 @@
 #coding:utf8
-from flask import flash,redirect,url_for,render_template,request
+from flask import flash,redirect,url_for,render_template,request,session,jsonify
 from . import user
 from forms import LoginForm,RegisterForm
 from models import User,db
 from email import send_email
+from validate import generate_verification_image_code
 from flask_login import login_user, logout_user, login_required, \
     current_user
 
 @user.route('/', methods=['POST','GET'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is None:
-            flash('用户不存在！')
-            return redirect(url_for('.login'))
-        elif not user.verify_password(form.password.data):
-            flash('用户名或密码错误！')
-            return redirect(url_for('.login'))
-        else:
-            login_user(user,form.remember_me.data)
-            return redirect(request.args.get('next') or url_for('main.home'))
+    # if form.validate_on_submit():
+    #     user = User.query.filter_by(email=form.email.data).first()
+    #     if user is None:
+    #         flash('用户不存在！')
+    #         return redirect(url_for('.login'))
+    #     elif not user.verify_password(form.password.data):
+    #         flash('用户名或密码错误！')
+    #         return redirect(url_for('.login'))
+    #     else:
+    #         login_user(user,form.remember_me.data)
+    #         return redirect(request.args.get('next') or url_for('main.home'))
     return render_template('user/login.html',form=form)
 
 @user.route('/register',methods=['POST','GET'])
 def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        email = form.email.data
-        username = form.username.data
-        password = form.password.data
-        user = User(email, username, password)
-        db.session.add(user)
-        db.session.commit()
-        token = user.generate_confirmation_token()
-        send_email(user.email,'确认账户','user/email/email_body',user=user,token=token)
-        return redirect(url_for('user.login'))
-    return render_template('user/register.html',form=form)
+    if request.method == 'GET':
+        strs = generate_verification_image_code()
+        session['code_text'] = strs
+        return render_template('user/register.html')
+    else:
+        username = request.form.get("username")
+        print username
+        return username
+
+@user.route('/validate/username',methods=['POST','GET'])
+def validateusername():
+    return jsonify(False)
+
+@user.route('/register/protocol')
+def register_protocol():
+    return render_template("user/register_protocol.html")
 
 # 用户收到确认邮件后，点击链接的处理函数
 @user.route('/confirm/<token>')
